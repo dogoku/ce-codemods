@@ -1,0 +1,99 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`proto-to-es5-class snapshot tests element 1`] = `
+"'use strict';
+
+/**
+ * A custom element
+ *
+ * @module my-element
+ * @type {HTMLElement}
+ */
+
+function helper() {
+  return 'help';
+}
+
+var dependency = require('a-dependency');
+
+function MyElement() {}
+MyElement.prototype = Object.create(HTMLElement.prototype);
+MyElement.prototype.STA_TIC = 'static property';
+
+var _inTheScope = 42;
+
+/** *************************** Custom Element API *****************************/
+
+MyElement.prototype.createdCallback = function() {
+  this._data = null;
+  this._onClick = this._onClick.bind(this);
+  this.innerHTML = '<span>OH HAI</span>';
+};
+
+MyElement.prototype.attachedCallback = function() {
+  this.addEventListener('click', this._onClick);
+};
+
+MyElement.prototype.detachedCallback = function() {
+  this.removeEventListener('click', this._onClick);
+  this._destroy();
+};
+
+/** ***************************** Public Methods *******************************/
+
+MyElement.prototype.getData = function() {
+  return this._data;
+};
+
+MyElement.prototype.setData = function(data) {
+  this._data = data;
+};
+/** ***************************** Private Methods ******************************/
+
+MyElement.prototype._onClick = function(event) {
+  console.log('ORLY?')
+};
+
+/** ******************** Registeration of the Custom Element *********************/
+
+module.exports = document.registerElement('my-element', { prototype: MyElement.prototype });
+module.exports.STA_TIC = MyElement.prototype.STA_TIC;"
+`;
+
+exports[`proto-to-es5-class snapshot tests singleton 1`] = `
+"'use strict';
+
+/**
+ * @module my-analytics-service
+ * @extends {HTMLElement}
+ */
+function myAnalyticsService() {}
+
+myAnalyticsService.prototype = Object.create(HTMLElement.prototype);
+
+myAnalyticsService.prototype.createdCallback = function() {
+  this._init = this._init.bind(this);
+  this._onAnalyticsEvent = this._onAnalyticsEvent.bind(this);
+  this._ga = null;
+  this._tracker = null;
+
+  if (!window.ga) {
+    console.warn('window.ga not detected. analytics service is not running');
+    return;
+  }
+
+  this._ga = window.ga;
+  this._ga(this._init);
+};
+/** ***************************** Singleton instance and fallback ******************************/
+
+var AnalyticsService = document.registerElement('my-analytics-service', { prototype: myAnalyticsService.prototype });
+var instance = document.querySelector('my-analytics-service');
+
+if (!instance) {
+  instance = new AnalyticsService();
+  document.body.appendChild(instance);
+}
+
+module.exports = instance;"
+`;

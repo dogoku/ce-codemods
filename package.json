@@ -1,0 +1,38 @@
+{
+  "name": "ce-codemods",
+  "version": "0.0.0",
+  "description": "A codemod script for ce-codemods",
+  "keywords": [
+    "codemod",
+    "qunit",
+    "qunit-dom"
+  ],
+  "homepage": "https://github.com/scalvert/ce-codemods#readme",
+  "bugs": {
+    "url": "https://github.com/scalvert/ce-codemods/issues"
+  },
+  "license": "MIT",
+  "author": "Steve Calvert <steve.calvert@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scalvert/ce-codemods.git"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "test": "jest"
+  },
+  "dependencies": {
+    "jscodeshift": "^0.6.2"
+  },
+  "devDependencies": {
+    "eslint": "^4.1.0",
+    "eslint-config-prettier": "^2.6.0",
+    "eslint-plugin-prettier": "^2.3.1",
+    "jest": "^23.6.0",
+    "jest-cli": "^23.6.0",
+    "prettier": "^1.7.4"
+  }, 
+  "jest": {
+    "testPathIgnorePatterns": ["node_modules", "__fixtures__"]
+  }
+}
