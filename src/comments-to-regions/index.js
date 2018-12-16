@@ -1,49 +1,27 @@
+const commentRegex = /[/*=#]{4,}([^/*=#]*)[/*=#]{4,}/;
+const newRegion = '#region';
+const endRegion = '#endregion\n\n//';
+const lastRegion = '\n//#endregion\n';
+
+/**
+ * Replaces custom region comments: `/****** Region Name ****** /`
+ * with VSCode region comments: `//#region Region Name`.
+ * 
+ * Checks for 4 or more consecutive: `/` `*` `=` or `#`
+ */
 module.exports = function transformer(file, api) {
   const j = api.jscodeshift;
-  const src = j(file.source);
-  
-  //find declarations matching `var XXXX = Object.create(HTMLElement.prototype)`
-  src.find(j.VariableDeclaration, {
-    declarations: [{init: {
-      callee: {
-        object: { name: "Object" },
-        property: {name: "create" }
-      },
-      arguments: [{
-        object: { name: "HTMLElement" },
-        property: { name: "prototype" }
-      }]
-    }}]
-  }).forEach(path => {
-    //extract useful parts
-    const comments = path.value.comments;
-    const protoName = path.value.declarations[0].id.name;
-    const className = protoName.replace(/Proto$/, '');
+  const comments = j(file.source).find(j.Comment);
 
-    //create `ClassName.prototype` expression
-    const protoExpr = j.memberExpression(
-      j.identifier(className),
-      j.identifier('prototype')
-    );
+  let c = 0;
+  return comments.forEach(path => {
+    const matches = commentRegex.exec(path.value.value);
+    if (!matches) { return; }
 
-    //create constructor function + copy comments
-    const es5Constr = j.functionDeclaration(j.identifier(className), [], j.blockStatement([]));
-    es5Constr.comments = comments;
-    
-    //create prototype extend `ClassName.prototype = Object.create(HTMLElement.prototype)` 
-    const es5extend = j.expressionStatement(
-      j.assignmentExpression('=', protoExpr, path.value.declarations[0].init)
-    );
+    const group = matches[1].replace(/[\r\n]+/gm,'').trim();
 
-    //replace proto var declaration with constructor+extend
-    j(path).replaceWith([es5Constr, es5extend])
+    path.value.type = 'CommentLine';
+    path.value.value = `${c++ ? endRegion: ''}${newRegion} ${group}`;
 
-    // replace all `ClassNameProto` identifiers with `className.prototype`
-    src.find(j.Identifier, { name: protoName }).forEach(
-      p => j(p).replaceWith(protoExpr)
-    )
-    
-  })
-
-  return src.toSource();
+  }, j).toSource() + (c ? lastRegion : '');
 }

@@ -1,6 +1,15 @@
 module.exports = function transformer(file, api) {
   const j = api.jscodeshift;
   const src = j(file.source);
+
+  // // HTMLElement.call(this);
+  // const callSuperExpr = j.expressionStatement(j.callExpression(
+  //   j.memberExpression(
+  //     j.identifier('HTMLElement'),
+  //     j.identifier('call')
+  //   ),
+  //   j.thisExpression()
+  // ));
   
   //find declarations matching `var XXXX = Object.create(HTMLElement.prototype)`
   src.find(j.VariableDeclaration, {

@@ -1,9 +1,8 @@
-/* global expect, describe, it */
+/**
+ * copy of jscodeshift/testUtils with snapshots added
+ * remove once https://github.com/facebook/jscodeshift/pull/297 is merged
+ */
 
-'use strict';
-
-const fs = require('fs');
-const path = require('path');
 const j = require('jscodeshift');
 
 function applyTransform(module, options, input) {
@@ -17,7 +16,7 @@ function applyTransform(module, options, input) {
     jscodeshift = jscodeshift.withParser(module.parser);
   }
 
-  const output = transform(
+  let output = transform(
     input,
     {
       jscodeshift,
@@ -26,7 +25,10 @@ function applyTransform(module, options, input) {
     options || {}
   );
 
-  return (output || '').trim();
+  // trim whitespace and normalize line endings
+  output = (output || '').trim().replace(/\r\n/gmi, '\n');
+
+  return output;
 }
 exports.applyTransform = applyTransform;
 
@@ -61,24 +63,3 @@ function defineSnapshotTest(module, options, input, testName) {
   });
 }
 exports.defineSnapshotTest = defineSnapshotTest;
-
-function defineSnapshotTestsForDir(dir) {
-  const mod = require(`${dir}/../`);
-  const fixtureFolder = `${dir}/__fixtures__`;
-
-  describe('snapshot tests', function() {
-    fs.readdirSync(fixtureFolder)
-      .filter(filename => /\.fixture\.js$/.test(filename))
-      .forEach(filename => {
-        const testName = filename.replace('.fixture.js', '');
-        const inputPath = path.join(fixtureFolder, `${testName}.fixture.js`);
-        const input = { source: fs.readFileSync(inputPath, 'utf8')};
-
-        it(testName, () => {
-          const output = runSnapshotTest(mod, {}, input);
-          runInlineTest(mod, {}, { source: output }, output);
-        })
-      });
-  });
-}
-exports.defineSnapshotTestsForDir = defineSnapshotTestsForDir;

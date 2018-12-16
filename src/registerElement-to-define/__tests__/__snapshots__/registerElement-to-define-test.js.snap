@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`registerElement-to-define snapshot tests exports-constructor 1`] = `
+"customElements.define('my-element', MyElement);
+module.exports = MyElement;
+module.exports.STA_TIC = MyElementProto.STA_TIC;
+
+customElements.define('my-element2', MyElement2);
+module.exports = MyElement2;
+module.exports.STA_TIC = MyElement2.prototype.STA_TIC;"
+`;
+
+exports[`registerElement-to-define snapshot tests exports-proto 1`] = `
+"customElements.define('my-element', MyElement);
+module.exports = MyElement;
+
+customElements.define('my-element2', MyElement2);
+module.exports = MyElement2.prototype;"
+`;
+
+exports[`registerElement-to-define snapshot tests no-export 1`] = `
+"customElements.define('my-element', MyElement);
+
+customElements.define('my-element', MyElement);"
+`;
+
+exports[`registerElement-to-define snapshot tests no-proto 1`] = `
+"customElements.define('my-element', MyElement);
+module.exports = MyElement;"
+`;

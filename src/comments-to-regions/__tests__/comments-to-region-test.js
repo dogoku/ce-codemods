@@ -1,7 +1,7 @@
 'use strict';
 
-const defineSnapshotTests = require('../../util/defineSnapshotTests');
+const defineSnapshotTests = require('../../../util/defineSnapshotTests');
 
-describe('comments-to-region-test', function() {
+describe('comments-to-region', function() {
   defineSnapshotTests(__dirname);
 });

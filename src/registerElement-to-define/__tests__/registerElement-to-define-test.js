@@ -2,6 +2,6 @@
 
 const defineSnapshotTests = require('../../../util/defineSnapshotTests');
 
-describe('proto-to-es5-class', function() {
+describe('registerElement-to-define', function() {
   defineSnapshotTests(__dirname);
 });

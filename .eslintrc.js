@@ -11,7 +11,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['**/__tests__/**/*.js', 'src/util/defineSnapshotTests.js'],
+      files: ['**/__tests__/**/*.js', 'util/*.js'],
       env: {
         jest: true,
       },

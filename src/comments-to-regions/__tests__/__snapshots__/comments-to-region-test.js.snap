@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`comments-to-region-test snapshot tests block 1`] = `
+exports[`comments-to-region snapshot tests block-comments 1`] = `
 "'use strict';
 
 /**
@@ -16,46 +16,85 @@ function helper() {
 
 var dependency = require('a-dependency');
 
-function MyElement() {}
-MyElement.prototype = Object.create(HTMLElement.prototype);
-MyElement.prototype.STA_TIC = 'static property';
+var MyElementProto = Object.create(HTMLElement.prototype);
+MyElementProto.STA_TIC = 'static property';
 
 var _inTheScope = 42;
 
-/** *************************** Custom Element API *****************************/
+//#region Custom Element API
 
-MyElement.prototype.createdCallback = function() {
-  this._data = null;
+MyElementProto.createdCallback = function() {
+  this._data = null; /* Ignore me */
   this._onClick = this._onClick.bind(this);
   this.innerHTML = '<span>OH HAI</span>';
 };
 
-MyElement.prototype.attachedCallback = function() {
+MyElementProto.attachedCallback = function() {
   this.addEventListener('click', this._onClick);
 };
 
-MyElement.prototype.detachedCallback = function() {
+MyElementProto.detachedCallback = function() {
   this.removeEventListener('click', this._onClick);
   this._destroy();
 };
 
-/** ***************************** Public Methods *******************************/
+//#endregion
 
-MyElement.prototype.getData = function() {
+//#region Public Methods
+
+MyElementProto.getData = function() {
   return this._data;
 };
 
-MyElement.prototype.setData = function(data) {
+MyElementProto.setData = function(data) {
   this._data = data;
 };
-/** ***************************** Private Methods ******************************/
 
-MyElement.prototype._onClick = function(event) {
+//#endregion
+
+//#region Private Methods
+
+MyElementProto._onClick = function(event) {
   console.log('ORLY?')
 };
 
-/** ******************** Registeration of the Custom Element *********************/
+//#endregion
 
-module.exports = document.registerElement('my-element', { prototype: MyElement.prototype });
-module.exports.STA_TIC = MyElement.prototype.STA_TIC;"
+//#region Registeration of the Custom Element
+
+module.exports = document.registerElement('my-element', { prototype: MyElementProto });
+module.exports.STA_TIC = MyElementProto.STA_TIC;
+
+//#endregion"
+`;
+
+exports[`comments-to-region snapshot tests line-comments 1`] = `
+"function helper() {
+  return 'help';
+}
+
+//#region Custom Element API
+
+MyElementProto.createdCallback = function() {
+  this._data = null; // ignore me
+  this._onClick = this._onClick.bind(this);
+  this.innerHTML = '<span>OH HAI</span>';
+};
+
+//#endregion
+
+//#region Private Methods
+
+MyElementProto._onClick = function(event) {
+  console.log('ORLY?')
+};
+
+//#endregion
+
+//#region Registeration of the Custom Element
+
+module.exports = document.registerElement('my-element', { prototype: MyElementProto });
+module.exports.STA_TIC = MyElementProto.STA_TIC;
+
+//#endregion"
 `;
