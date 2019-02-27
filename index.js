@@ -4,6 +4,7 @@ const transforms = [
   require(`./src/comments-to-regions`),
   require(`./src/proto-to-es5-class`),
   require(`./src/registerElement-to-define`),
+  require('./src/lebab')
 ];
 
 module.exports = function transformer(file, api, opts) {

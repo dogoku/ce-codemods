@@ -6,7 +6,7 @@ const lastRegion = '\n//#endregion\n';
 /**
  * Replaces custom region comments: `/****** Region Name ****** /`
  * with VSCode region comments: `//#region Region Name`.
- * 
+ *
  * Checks for 4 or more consecutive: `/` `*` `=` or `#`
  */
 module.exports = function transformer(file, api) {
@@ -16,12 +16,19 @@ module.exports = function transformer(file, api) {
   let c = 0;
   return comments.forEach(path => {
     const matches = commentRegex.exec(path.value.value);
-    if (!matches) { return; }
+    const isBlockRegion = (
+      path.value.type === 'CommentBlock' &&
+      path.value.value.trim().match(/^#(end)?region/)
+    )
 
-    const group = matches[1].replace(/[\r\n]+/gm,'').trim();
+    if (!matches && !isBlockRegion) { return; }
 
     path.value.type = 'CommentLine';
-    path.value.value = `${c++ ? endRegion: ''}${newRegion} ${group}`;
+
+    if (matches) {
+      const group = matches[1].replace(/[\r\n]+/gm,'').trim();
+      path.value.value = `${c++ ? endRegion: ''}${newRegion} ${group}`;
+    }
 
   }, j).toSource() + (c ? lastRegion : '');
 }

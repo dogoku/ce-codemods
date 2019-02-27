@@ -1,75 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`comments-to-region snapshot tests block-comments 1`] = `
-"'use strict';
-
-/**
- * A custom element
- *
- * @module my-element
- * @type {HTMLElement}
- */
-
-function helper() {
-  return 'help';
-}
-
-var dependency = require('a-dependency');
-
-var MyElementProto = Object.create(HTMLElement.prototype);
-MyElementProto.STA_TIC = 'static property';
-
-var _inTheScope = 42;
-
-//#region Custom Element API
-
-MyElementProto.createdCallback = function() {
-  this._data = null; /* Ignore me */
-  this._onClick = this._onClick.bind(this);
-  this.innerHTML = '<span>OH HAI</span>';
-};
-
-MyElementProto.attachedCallback = function() {
-  this.addEventListener('click', this._onClick);
-};
-
-MyElementProto.detachedCallback = function() {
-  this.removeEventListener('click', this._onClick);
-  this._destroy();
-};
-
-//#endregion
-
-//#region Public Methods
-
-MyElementProto.getData = function() {
-  return this._data;
-};
-
-MyElementProto.setData = function(data) {
-  this._data = data;
-};
-
-//#endregion
-
-//#region Private Methods
-
-MyElementProto._onClick = function(event) {
-  console.log('ORLY?')
-};
-
-//#endregion
-
-//#region Registeration of the Custom Element
-
-module.exports = document.registerElement('my-element', { prototype: MyElementProto });
-module.exports.STA_TIC = MyElementProto.STA_TIC;
-
-//#endregion"
-`;
-
-exports[`comments-to-region snapshot tests block-region 1`] = `
-"'use strict';
+'use strict';
 
 var DateService = require('sgx-date-time-service');
 var DeviceService = require('sgx-device-service');
@@ -82,17 +11,17 @@ var entityMap = {
   '&': '&amp;',
   '<': '&lt;',
   '>': '&gt;',
-  '\\"': '&quot;',
-  \\"'\\": '&#39;',
+  '"': '&quot;',
+  "'": '&#39;',
   '/': '&#x2F;',
-  '\`': '&#x60;',
+  '`': '&#x60;',
   '=': '&#x3D;'
 };
 
 function processMultiline(htmlString = '') {
   return String(htmlString)
-    .replace(/[&<>\\"'\`=\\\\/]/g, string => entityMap[string])
-    .replace(/\\\\n+/gmi, '<br>');
+    .replace(/[&<>"'`=\/]/g, string => entityMap[string])
+    .replace(/\n+/gmi, '<br>');
 }
 
 /**
@@ -101,7 +30,7 @@ function processMultiline(htmlString = '') {
  * @type {HTMLElement}
  */
 
-// #region Custom Element API 
+/* #region Custom Element API */
 
 SgxContentTableProto.createdCallback = function createdCallback() {
   this._table = document.createElement('table');
@@ -119,9 +48,9 @@ SgxContentTableProto.attachedCallback = function attachedCallback() {
   }
 };
 
-// #endregion 
+/* #endregion */
 
-// #region Public Methods 
+/* #region Public Methods */
 
 SgxContentTableProto.setData = function setData(data) {
   var thead = this._table.querySelector('thead');
@@ -195,9 +124,9 @@ SgxContentTableProto.setConfig = function setConfig(config) {
   this._table.appendChild(this._tbody);
 };
 
-// #endregion 
+/* #endregion */
 
-// #region Private Methods 
+/* #region Private Methods */
 
 SgxContentTableProto._getRow = function _getRow(data) {
   var tr = document.createElement('tr');
@@ -239,8 +168,8 @@ SgxContentTableProto._getCell = function _getCell(data, type, tag, { cssClass, w
     case 'link':
       var url = data && data.href && data.href.url;
       if (url) {
-        var target = UrlUtils.isExternalUrl(url) ? ' target=\\"_blank\\"' : '';
-        cell.innerHTML = \`<a href=\\"\${ url }\\" class=\\"website-link website-link--alt\\"\${ target }>\${ (data.title || url) }</a>\`;
+        var target = UrlUtils.isExternalUrl(url) ? ' target="_blank"' : '';
+        cell.innerHTML = `<a href="${ url }" class="website-link website-link--alt"${ target }>${ (data.title || url) }</a>`;
       }
       break;
     case 'html':
@@ -384,42 +313,10 @@ SgxContentTableProto._initJsStickyHeader = function _initJsStickyHeader() {
   }
 };
 
-// #endregion 
+/* #endregion */
 
-// #region Registration of the Element 
+/* #region Registration of the Element */
 
 module.exports = document.registerElement('sgx-content-table', { prototype: SgxContentTableProto });
 
-// #endregion"
-`;
-
-exports[`comments-to-region snapshot tests line-comments 1`] = `
-"function helper() {
-  return 'help';
-}
-
-//#region Custom Element API
-
-MyElementProto.createdCallback = function() {
-  this._data = null; // ignore me
-  this._onClick = this._onClick.bind(this);
-  this.innerHTML = '<span>OH HAI</span>';
-};
-
-//#endregion
-
-//#region Private Methods
-
-MyElementProto._onClick = function(event) {
-  console.log('ORLY?')
-};
-
-//#endregion
-
-//#region Registeration of the Custom Element
-
-module.exports = document.registerElement('my-element', { prototype: MyElementProto });
-module.exports.STA_TIC = MyElementProto.STA_TIC;
-
-//#endregion"
-`;
+/* #endregion */

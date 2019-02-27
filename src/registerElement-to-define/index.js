@@ -1,7 +1,20 @@
+const v0Methods = {
+  'attachedCallback': 'connectedCallback',
+  'detachedCallback': 'disconnectedCallback'
+};
+
 module.exports = function transformer(file, api) {
   const j = api.jscodeshift;
   const src = j(file.source);
-  
+
+  // find all identifiers matching methods in v0Methods
+  // and rename them to their v1 counterpart
+  src.find(j.Identifier).filter(p => {
+    return !!v0Methods[p.value.name]
+  }).forEach(p => {
+    p.value.name = v0Methods[p.value.name];
+  }).toSource();
+
   // Find all `document.registerElement('...', { prototype: ... })`
   src.find(j.CallExpression, {
     callee: {
@@ -17,8 +30,8 @@ module.exports = function transformer(file, api) {
     const elementName = p.value.arguments[0].value;
     const proto = p.value.arguments[1].properties[0].value;
     const className = proto.name ? proto.name.replace(/Proto$/,'') : proto.object.name;
-    
-    // => customElements.define(elementName, className) 
+
+    // => customElements.define(elementName, className)
     const ceDefExpr = j.callExpression(
       j.memberExpression(
         j.identifier('customElements'),
@@ -28,7 +41,7 @@ module.exports = function transformer(file, api) {
         j.identifier(className)
       ]
     );
-    
+
     // => module.exports = className
     const modExpClassExpr = j.assignmentExpression(
       '=', j.memberExpression(
@@ -36,11 +49,11 @@ module.exports = function transformer(file, api) {
         j.identifier('exports')
       ), j.identifier(className)
     );
-    
+
     // if parent is `module.exports = document.registerElement`
     // replace with customElement.define and module.exports = className
     if (
-      j(p.parentPath).isOfType(j.AssignmentExpression) && 
+      j(p.parentPath).isOfType(j.AssignmentExpression) &&
       j(p.parentPath.parentPath).isOfType(j.ExpressionStatement) &&
       p.parentPath.value.left.object.name == 'module'
     ) {
@@ -68,7 +81,7 @@ module.exports = function transformer(file, api) {
       }
     });
 
-  }).toSource();
-  
+  });
+
   return src.toSource();
 }

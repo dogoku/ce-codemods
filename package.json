@@ -22,7 +22,9 @@
     "test": "jest"
   },
   "dependencies": {
-    "jscodeshift": "^0.6.2"
+    "f-matches": "^1.1.0",
+    "jscodeshift": "^0.6.2",
+    "lebab": "^3.0.3"
   },
   "devDependencies": {
     "eslint": "^4.1.0",
